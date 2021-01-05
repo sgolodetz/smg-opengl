@@ -103,3 +103,5 @@ class OpenGLUtil:
         width: int = int((bottom_right[0] - top_left[0]) * window_size[0])
         height: int = int((bottom_right[1] - top_left[1]) * window_size[1])
         glViewport(left, top, width, height)
+        glScissor(left, top, width, height)
+        glEnable(GL_SCISSOR_TEST)
