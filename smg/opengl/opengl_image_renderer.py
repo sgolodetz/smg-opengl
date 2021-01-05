@@ -5,13 +5,13 @@ from OpenGL.GL import *
 from .opengl_util import OpenGLUtil
 
 
-class OpenGLRenderer:
-    """An OpenGL renderer."""
+class OpenGLImageRenderer:
+    """An OpenGL image renderer."""
 
     # CONSTRUCTOR
 
     def __init__(self):
-        """Construct a renderer."""
+        """Construct an OpenGL image renderer."""
         self.__alive: bool = True
         self.__texture_id: int = glGenTextures(1)
 
