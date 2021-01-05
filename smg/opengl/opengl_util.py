@@ -1,3 +1,5 @@
+import numpy as np
+
 from OpenGL.GL import *
 from typing import Tuple
 
@@ -81,3 +83,23 @@ class OpenGLUtil:
 
         glLoadIdentity()
         glFrustum(left_val, right_val, bottom_val, top_val, near_val, far_val)
+
+    @staticmethod
+    def set_viewport(top_left: Tuple[float, float], bottom_right: Tuple[float, float],
+                     window_size: Tuple[int, int]) -> None:
+        """
+        Set the OpenGL viewport.
+
+        .. note::
+            The top-left and bottom-right coordinates of the viewport denote fractions of the window size,
+            s.t. (0,0) denotes the top-left of the window and (1,1) denotes the bottom-right of the window.
+
+        :param top_left:        An (x,y) tuple denoting the top-left of the viewport to set.
+        :param bottom_right:    An (x,y) tuple denoting the bottom-right of the viewport to set.
+        :param window_size:     The window size.
+        """
+        left: int = int(np.round(top_left[0] * window_size[0]))
+        top: int = int(np.round((1.0 - bottom_right[1]) * window_size[1]))
+        width: int = int((bottom_right[0] - top_left[0]) * window_size[0])
+        height: int = int((bottom_right[1] - top_left[1]) * window_size[1])
+        glViewport(left, top, width, height)
