@@ -15,6 +15,7 @@ setup(
     packages=find_packages(include=["smg.opengl"]),
     include_package_data=True,
     install_requires=[
+        "numpy",
         "PyOpenGL"
     ],
     classifiers=[
