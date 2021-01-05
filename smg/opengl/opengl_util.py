@@ -1,11 +1,56 @@
 import numpy as np
 
 from OpenGL.GL import *
-from typing import Tuple
+from OpenGL.GLU import *
+from typing import Optional, Tuple
 
 
 class OpenGLUtil:
     """Utility functions related to OpenGL."""
+
+    # NESTED CLASSES
+
+    class GLUQuadricWrapper:
+        """A wrapper around a GLU quadric."""
+
+        # CONSTRUCTOR
+        def __init__(self, quadric: Optional[GLUquadric] = None):
+            """
+            Construct a quadric wrapper.
+
+            :param quadric:     An optional existing GLU quadric to wrap (if none is specified,
+                                one will be created on the fly).
+            """
+            self.__alive: bool = True
+            self.__quadric: GLUquadric = quadric if quadric is not None else gluNewQuadric()
+
+        # DESTRUCTOR
+
+        def __del__(self):
+            """Destroy the quadric wrapper."""
+            self.terminate()
+
+        # SPECIAL METHODS
+
+        def __enter__(self):
+            """No-op (needed to allow the wrapper's lifetime to be managed by a with statement)."""
+            return self
+
+        def __exit__(self, exception_type, exception_value, traceback):
+            """Destroy the wrapper at the end of the with statement that's used to manage its lifetime."""
+            self.terminate()
+
+        # PUBLIC METHODS
+
+        def get_quadric(self) -> GLUquadric:
+            """Get the wrapped quadric."""
+            return self.__quadric
+
+        def terminate(self) -> None:
+            """Destroy the quadric wrapper."""
+            if self.__alive:
+                gluDeleteQuadric(self.__quadric)
+                self.__alive = False
 
     # PUBLIC STATIC METHODS
 
@@ -35,6 +80,26 @@ class OpenGLUtil:
 
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()
+
+    @staticmethod
+    def render_sphere(centre: np.ndarray, radius: float, *,
+                      slices: int, stacks: int, quadric: Optional[GLUquadric] = None) -> None:
+        """
+        Render a sphere of the specified radius at the specified position.
+
+        :param centre:      The position of the centre of the sphere.
+        :param radius:      The radius of the sphere.
+        :param slices:      The number of subdivisions of the sphere around its vertical axis.
+        :param stacks:      The number of subdivisions of the sphere along its vertical axis.
+        :param quadric:     An optional GLU quadric to use when rendering the sphere (if none is specified,
+                            one will be created on the fly).
+        """
+        with OpenGLUtil.GLUQuadricWrapper(quadric) as quadric_wrapper:
+            glMatrixMode(GL_MODELVIEW)
+            glPushMatrix()
+            glTranslatef(*centre)
+            gluSphere(quadric_wrapper.get_quadric(), radius, slices, stacks)
+            glPopMatrix()
 
     @staticmethod
     def render_textured_quad(texture_id: int) -> None:
