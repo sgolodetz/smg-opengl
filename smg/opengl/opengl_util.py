@@ -2,7 +2,9 @@ import numpy as np
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
+
+from smg.utility import GeometryUtil
 
 
 class OpenGLUtil:
@@ -125,6 +127,25 @@ class OpenGLUtil:
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
+
+    @staticmethod
+    def render_voxel_grid(mins: List[float], maxs: List[float], voxel_size: List[float]) -> None:
+        """
+        Render a wireframe voxel grid.
+
+        :param mins:        The minimum bounds of the voxel grid.
+        :param maxs:        The maximum bounds of the voxel grid.
+        :param voxel_size:  The voxel size.
+        """
+        pts1, pts2 = GeometryUtil.make_voxel_grid_endpoints(mins, maxs, voxel_size)
+
+        glBegin(GL_LINES)
+
+        for i in range(len(pts1)):
+            glVertex3f(*pts1[i])
+            glVertex3f(*pts2[i])
+
+        glEnd()
 
     @staticmethod
     def set_projection_matrix(intrinsics: Tuple[float, float, float, float], width: int, height: int) -> None:

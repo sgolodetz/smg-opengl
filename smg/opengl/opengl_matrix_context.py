@@ -7,15 +7,15 @@ class OpenGLMatrixContext:
 
     # CONSTRUCTOR
 
-    def __init__(self, matrix_mode: int, set_matrix: Callable[[], None]):
+    def __init__(self, matrix_mode: int, change_matrix: Callable[[], None]):
         """
         Construct an OpenGL matrix context.
 
         :param matrix_mode:     The OpenGL matrix mode (e.g. GL_PROJECTION) denoting the matrix to be changed.
-        :param set_matrix:      The callable that should be used to change the matrix.
+        :param change_matrix:   The callable that should be used to change the matrix.
         """
         self.__matrix_mode: int = matrix_mode
-        self.__set_matrix: Callable[[], None] = set_matrix
+        self.__set_matrix: Callable[[], None] = change_matrix
 
     # SPECIAL METHODS
 
