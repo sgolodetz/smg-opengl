@@ -129,6 +129,26 @@ class OpenGLUtil:
         glDisable(GL_TEXTURE_2D)
 
     @staticmethod
+    def render_trajectory(trajectory: List[Tuple[float, np.ndarray]], *, colour: Tuple[float, float, float]) -> None:
+        """
+        Render the line segments needed to visualise a trajectory.
+
+        :param trajectory:  The trajectory to visualise.
+        :param colour:      The colour to use for the line segments.
+        """
+        if len(trajectory) < 2:
+            return
+
+        glColor3f(*colour)
+
+        glBegin(GL_LINE_STRIP)
+
+        for _, pose in trajectory:
+            glVertex3f(*pose[0:3, 3])
+
+        glEnd()
+
+    @staticmethod
     def render_voxel_grid(mins: List[float], maxs: List[float], voxel_size: List[float]) -> None:
         """
         Render a wireframe voxel grid.
