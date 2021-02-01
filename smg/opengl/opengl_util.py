@@ -93,6 +93,39 @@ class OpenGLUtil:
         glLoadMatrixf(m.flatten(order='F'))
 
     @staticmethod
+    def render_aabb(mins: np.ndarray, maxs: np.ndarray) -> None:
+        """
+        Render an axis-aligned bounding box (AABB).
+
+        :param mins:    The minimum bounds of the AABB.
+        :param maxs:    The maximum bounds of the AABB.
+        """
+        glBegin(GL_LINE_LOOP)
+        glVertex3f(mins[0], mins[1], mins[2])
+        glVertex3f(maxs[0], mins[1], mins[2])
+        glVertex3f(maxs[0], mins[1], maxs[2])
+        glVertex3f(mins[0], mins[1], maxs[2])
+        glEnd()
+
+        glBegin(GL_LINE_LOOP)
+        glVertex3f(mins[0], maxs[1], mins[2])
+        glVertex3f(maxs[0], maxs[1], mins[2])
+        glVertex3f(maxs[0], maxs[1], maxs[2])
+        glVertex3f(mins[0], maxs[1], maxs[2])
+        glEnd()
+
+        glBegin(GL_LINES)
+        glVertex3f(mins[0], mins[1], mins[2])
+        glVertex3f(mins[0], maxs[1], mins[2])
+        glVertex3f(maxs[0], mins[1], mins[2])
+        glVertex3f(maxs[0], maxs[1], mins[2])
+        glVertex3f(maxs[0], mins[1], maxs[2])
+        glVertex3f(maxs[0], maxs[1], maxs[2])
+        glVertex3f(mins[0], mins[1], maxs[2])
+        glVertex3f(mins[0], maxs[1], maxs[2])
+        glEnd()
+
+    @staticmethod
     def render_sphere(centre: np.ndarray, radius: float, *,
                       slices: int, stacks: int, quadric: Optional[GLUquadric] = None) -> None:
         """
