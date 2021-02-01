@@ -84,6 +84,15 @@ class OpenGLUtil:
         glPopMatrix()
 
     @staticmethod
+    def load_matrix(m: np.ndarray) -> None:
+        """
+        Set the currently active OpenGL matrix to the specified matrix.
+
+        :param m:   The matrix with which to set the currently active OpenGL matrix.
+        """
+        glLoadMatrixf(m.flatten(order='F'))
+
+    @staticmethod
     def render_sphere(centre: np.ndarray, radius: float, *,
                       slices: int, stacks: int, quadric: Optional[GLUquadric] = None) -> None:
         """
