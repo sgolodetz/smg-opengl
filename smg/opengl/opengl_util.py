@@ -149,23 +149,31 @@ class OpenGLUtil:
         glEnd()
 
     @staticmethod
-    def render_voxel_grid(mins: List[float], maxs: List[float], voxel_size: List[float]) -> None:
+    def render_voxel_grid(mins: List[float], maxs: List[float], voxel_size: List[float], *,
+                          dotted: bool = False) -> None:
         """
         Render a wireframe voxel grid.
 
         :param mins:        The minimum bounds of the voxel grid.
         :param maxs:        The maximum bounds of the voxel grid.
         :param voxel_size:  The voxel size.
+        :param dotted:      Whether to use dotted lines for the voxel grid.
         """
         pts1, pts2 = GeometryUtil.make_voxel_grid_endpoints(mins, maxs, voxel_size)
 
-        glBegin(GL_LINES)
+        if dotted:
+            glPushAttrib(GL_ENABLE_BIT)
+            glLineStipple(1, 0x8888)
+            glEnable(GL_LINE_STIPPLE)
 
+        glBegin(GL_LINES)
         for i in range(len(pts1)):
             glVertex3f(*pts1[i])
             glVertex3f(*pts2[i])
-
         glEnd()
+
+        if dotted:
+            glPopAttrib()
 
     @staticmethod
     def set_projection_matrix(intrinsics: Tuple[float, float, float, float], width: int, height: int) -> None:

@@ -1,3 +1,5 @@
+import numpy as np
+
 from OpenGL.GL import *
 from typing import Callable
 
@@ -30,3 +32,14 @@ class OpenGLMatrixContext:
         """Pop the old value of the matrix from the OpenGL stack."""
         glMatrixMode(self.__matrix_mode)
         glPopMatrix()
+
+    # PUBLIC STATIC METHODS
+
+    @staticmethod
+    def load_matrix(m: np.ndarray) -> None:
+        """
+        Set the currently active OpenGL matrix to the specified matrix.
+
+        :param m:   The matrix with which to set the currently active OpenGL matrix.
+        """
+        glLoadMatrixf(m.flatten(order='F'))
