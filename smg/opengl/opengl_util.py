@@ -82,6 +82,8 @@ class OpenGLUtil:
             # Make a camera positioned at the centre of the base of the cylinder and  looking along its axis.
             n: np.ndarray = self.__axis / np.linalg.norm(self.__axis)
             up: np.ndarray = np.array([0.0, -1.0, 0.0])
+            if np.linalg.norm(np.cross(n, up)) < 0.001:
+                up = np.array([1.0, 0.0, 0.0])
             camera: SimpleCamera = SimpleCamera(self.__base_centre, n, up)
 
             # Use it to obtain the matrix that should be used to update OpenGL's model-view matrix.
