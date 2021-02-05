@@ -126,6 +126,21 @@ class OpenGLUtil:
         glEnd()
 
     @staticmethod
+    def render_cylinder(base_centre: np.ndarray, top_centre: np.ndarray, base_radius: float, top_radius: float,
+                        slices: int, stacks: int, quadric: Optional[GLUquadric] = None) -> None:
+        from smg.opengl.oriented_quadric_context import OrientedQuadricContext
+        axis: np.ndarray = top_centre - base_centre
+        axis_norm: float = np.linalg.norm(axis)
+        if axis_norm < 0.001:
+            return
+
+        with OpenGLUtil.GLUQuadricWrapper(quadric) as quadric_wrapper:
+            with OrientedQuadricContext(base_centre, axis):
+                gluCylinder(
+                    quadric_wrapper.get_quadric(), base_radius, top_radius, axis_norm, slices, stacks
+                )
+
+    @staticmethod
     def render_sphere(centre: np.ndarray, radius: float, *,
                       slices: int, stacks: int, quadric: Optional[GLUquadric] = None) -> None:
         """
