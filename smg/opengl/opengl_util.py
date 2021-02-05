@@ -4,6 +4,8 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from typing import List, Optional, Tuple
 
+from smg.rigging.cameras import SimpleCamera
+from smg.rigging.helpers import CameraPoseConverter
 from smg.utility import GeometryUtil
 
 
@@ -53,6 +55,47 @@ class OpenGLUtil:
             if self.__alive:
                 gluDeleteQuadric(self.__quadric)
                 self.__alive = False
+
+    class OrientedCylinderContext:
+        """Used to allow a GLU cylinder to be rendered at a particular orientation."""
+
+        # CONSTRUCTOR
+
+        def __init__(self, base_centre: np.ndarray, axis: np.ndarray):
+            """
+            Construct an oriented cylinder context.
+
+            .. note::
+                By default, a GLU cylinder will be drawn along the z axis, from z = 0 to z = height. The goal of this
+                class is to allow OpenGL's model-view matrix to be temporarily modified so one can be drawn elsewhere.
+
+            :param base_centre: The centre of the base of the cylinder.
+            :param axis:        The cylinder's axis (a vector from the centre of its base to the centre of its top).
+            """
+            self.__base_centre: np.ndarray = base_centre
+            self.__axis: np.ndarray = axis
+
+        # SPECIAL METHODS
+
+        def __enter__(self):
+            """Modify the model-view matrix to arrange for the cylinder to be drawn in the right place."""
+            # Make a camera positioned at the centre of the base of the cylinder and  looking along its axis.
+            n: np.ndarray = self.__axis / np.linalg.norm(self.__axis)
+            up: np.ndarray = np.array([0.0, -1.0, 0.0])
+            camera: SimpleCamera = SimpleCamera(self.__base_centre, n, up)
+
+            # Use it to obtain the matrix that should be used to update OpenGL's model-view matrix.
+            m: np.ndarray = np.linalg.inv(CameraPoseConverter.camera_to_pose(camera))
+
+            # Update OpenGL's model-view matrix and return.
+            glMatrixMode(GL_MODELVIEW)
+            glPushMatrix()
+            glMultMatrixf(m.flatten(order='F'))
+            return self
+
+        def __exit__(self, exception_type, exception_value, traceback):
+            """Restore the model-view matrix after drawing the cylinder."""
+            glPopMatrix()
 
     # PUBLIC STATIC METHODS
 
@@ -127,15 +170,26 @@ class OpenGLUtil:
 
     @staticmethod
     def render_cylinder(base_centre: np.ndarray, top_centre: np.ndarray, base_radius: float, top_radius: float,
-                        slices: int, stacks: int, quadric: Optional[GLUquadric] = None) -> None:
-        from smg.opengl.oriented_quadric_context import OrientedQuadricContext
+                        slices: int, stacks: int = 1, quadric: Optional[GLUquadric] = None) -> None:
+        """
+        Render a cylinder between the specified base centre and top centre points.
+
+        :param base_centre:     The centre of the base of the cylinder.
+        :param top_centre:      The centre of the top of the cylinder.
+        :param base_radius:     The radius of the base of the cylinder.
+        :param top_radius:      The radius of the top of the cylinder.
+        :param slices:          The number of subdivisions of the cylinder around its length.
+        :param stacks:          The number of subdivisions of the cylinder along its length.
+        :param quadric:         An optional GLU quadric to use when rendering the cylinder (if none is specified,
+                                one will be created on the fly).
+        """
         axis: np.ndarray = top_centre - base_centre
         axis_norm: float = np.linalg.norm(axis)
         if axis_norm < 0.001:
             return
 
         with OpenGLUtil.GLUQuadricWrapper(quadric) as quadric_wrapper:
-            with OrientedQuadricContext(base_centre, axis):
+            with OpenGLUtil.OrientedCylinderContext(base_centre, axis):
                 gluCylinder(
                     quadric_wrapper.get_quadric(), base_radius, top_radius, axis_norm, slices, stacks
                 )
