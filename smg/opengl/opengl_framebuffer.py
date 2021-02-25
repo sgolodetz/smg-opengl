@@ -61,4 +61,6 @@ class OpenGLFrameBuffer:
     # PUBLIC METHODS
 
     def terminate(self) -> None:
-        pass
+        glDeleteRenderbuffers(1, [self.__depth_buffer_id])
+        glDeleteTextures([self.__colour_buffer_id])
+        glDeleteFramebuffers(1, [self.__id])
