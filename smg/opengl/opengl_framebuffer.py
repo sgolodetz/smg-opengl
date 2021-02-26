@@ -13,6 +13,8 @@ class OpenGLFrameBuffer:
         :param width:   The width of the frame buffer.
         :param height:  The height of the frame buffer.
         """
+        self.__alive: bool = False
+
         # Set up the colour buffer.
         self.__colour_buffer_id: int = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.__colour_buffer_id)
@@ -42,25 +44,33 @@ class OpenGLFrameBuffer:
         # Switch back to rendering to the normal display.
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
+        # Mark construction of the frame buffer as having finished successfully.
+        self.__alive = True
+
     # DESTRUCTOR
 
     def __del__(self):
+        """Destroy the frame buffer."""
         self.terminate()
 
     # SPECIAL METHODS
 
     def __enter__(self):
-        """TODO"""
+        """Activate the frame buffer."""
         glBindFramebuffer(GL_FRAMEBUFFER, self.__id)
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        """TODO"""
+        """Deactivate the frame buffer."""
+        # TODO: Note that we don't currently support frame buffer nesting.
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
     # PUBLIC METHODS
 
     def terminate(self) -> None:
-        glDeleteRenderbuffers(1, [self.__depth_buffer_id])
-        glDeleteTextures([self.__colour_buffer_id])
-        glDeleteFramebuffers(1, [self.__id])
+        """Destroy the frame buffer."""
+        if self.__alive:
+            glDeleteRenderbuffers(1, [self.__depth_buffer_id])
+            glDeleteTextures([self.__colour_buffer_id])
+            glDeleteFramebuffers(1, [self.__id])
+            self.__alive = False
