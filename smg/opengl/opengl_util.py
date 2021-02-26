@@ -79,7 +79,7 @@ class OpenGLUtil:
 
         def __enter__(self):
             """Modify the model-view matrix to arrange for the cylinder to be drawn in the right place."""
-            # Make a camera positioned at the centre of the base of the cylinder and  looking along its axis.
+            # Make a camera positioned at the centre of the base of the cylinder and looking along its axis.
             n: np.ndarray = self.__axis / np.linalg.norm(self.__axis)
             up: np.ndarray = np.array([0.0, -1.0, 0.0])
             if np.linalg.norm(np.cross(n, up)) < 0.001:
@@ -195,6 +195,10 @@ class OpenGLUtil:
                 gluCylinder(
                     quadric_wrapper.get_quadric(), base_radius, top_radius, axis_norm, slices, stacks
                 )
+                gluDisk(quadric_wrapper.get_quadric(), 0.0, base_radius, slices, 1)
+                glTranslatef(0.0, 0.0, axis_norm)
+                gluDisk(quadric_wrapper.get_quadric(), 0.0, top_radius, slices, 1)
+                glTranslatef(0.0, 0.0, -axis_norm)
 
     @staticmethod
     def render_sphere(centre: np.ndarray, radius: float, *,
