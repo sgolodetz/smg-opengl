@@ -138,6 +138,18 @@ class OpenGLUtil:
         glLoadMatrixf(m.flatten(order='F'))
 
     @staticmethod
+    def read_bgr_image(width: int, height: int) -> np.ndarray:
+        """
+        Read the contents of the screen (or active framebuffer) into a BGR image.
+
+        :param width:   The screen / framebuffer width.
+        :param height:  The screen / framebuffer height.
+        :return:        The BGR image.
+        """
+        buffer: bytes = glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE)
+        return np.frombuffer(buffer, dtype=np.uint8).reshape((height, width, 3))[::-1, :]
+
+    @staticmethod
     def render_aabb(mins: np.ndarray, maxs: np.ndarray) -> None:
         """
         Render an axis-aligned bounding box (AABB).
