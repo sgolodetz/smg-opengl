@@ -150,6 +150,26 @@ class OpenGLUtil:
         return np.frombuffer(buffer, dtype=np.uint8).reshape((height, width, 3))[::-1, :]
 
     @staticmethod
+    def read_depth_image(width: int, height: int, near: float, far: float) -> np.ndarray:
+        """
+        Read the contents of the active depth buffer into a floating-point depth image.
+
+        :param width:   The depth buffer width.
+        :param height:  The depth buffer height.
+        :param near:    The distance to the camera frustum's near plane.
+        :param far:     The distance to the camera frustum's far plane.
+        :return:        The depth image.
+        """
+        depth_buffer: bytes = glReadPixels(0, 0, width, height, GL_DEPTH_COMPONENT, GL_FLOAT)
+        depth_image: np.ndarray = np.frombuffer(depth_buffer, dtype=np.float32).reshape((height, width))[::-1, :]
+
+        # See: https://stackoverflow.com/questions/52036176/pyopengl-get-depth-map-of-drawn-image
+        z_ndc: np.ndarray = 2.0 * depth_image - 1.0
+        z_eye: np.ndarray = 2.0 * near * far / (far + near - z_ndc * (far - near))
+
+        return z_eye
+
+    @staticmethod
     def render_aabb(mins: np.ndarray, maxs: np.ndarray) -> None:
         """
         Render an axis-aligned bounding box (AABB).
