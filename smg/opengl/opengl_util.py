@@ -150,22 +150,22 @@ class OpenGLUtil:
         return np.frombuffer(buffer, dtype=np.uint8).reshape((height, width, 3))[::-1, :]
 
     @staticmethod
-    def read_depth_image(width: int, height: int, near: float, far: float) -> np.ndarray:
+    def read_depth_image(width: int, height: int, near_val: float = 0.1, far_val: float = 1000.0) -> np.ndarray:
         """
         Read the contents of the active depth buffer into a floating-point depth image.
 
-        :param width:   The depth buffer width.
-        :param height:  The depth buffer height.
-        :param near:    The distance to the camera frustum's near plane.
-        :param far:     The distance to the camera frustum's far plane.
-        :return:        The depth image.
+        :param width:       The depth buffer width.
+        :param height:      The depth buffer height.
+        :param near_val:    The distance to the camera frustum's near plane.
+        :param far_val:     The distance to the camera frustum's far plane.
+        :return:            The depth image.
         """
         depth_buffer: bytes = glReadPixels(0, 0, width, height, GL_DEPTH_COMPONENT, GL_FLOAT)
         depth_image: np.ndarray = np.frombuffer(depth_buffer, dtype=np.float32).reshape((height, width))[::-1, :]
 
         # See: https://stackoverflow.com/questions/52036176/pyopengl-get-depth-map-of-drawn-image
         z_ndc: np.ndarray = 2.0 * depth_image - 1.0
-        z_eye: np.ndarray = 2.0 * near * far / (far + near - z_ndc * (far - near))
+        z_eye: np.ndarray = 2.0 * near_val * far_val / (far_val + near_val - z_ndc * (far_val - near_val))
 
         return z_eye
 
