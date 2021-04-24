@@ -12,8 +12,10 @@ class OpenGLImageRenderer:
 
     def __init__(self):
         """Construct an OpenGL image renderer."""
-        self.__alive: bool = True
-        self.__texture_id: int = glGenTextures(1)
+        # : bool
+        self.__alive = True
+        # : int
+        self.__texture_id = glGenTextures(1)
 
     # DESTRUCTOR
 
@@ -43,7 +45,8 @@ class OpenGLImageRenderer:
         # Copy the image to a texture.
         glBindTexture(GL_TEXTURE_2D, self.__texture_id)
 
-        channels: int = image.shape[2]
+        # : int
+        channels = image.shape[2]
         if channels == 3:
             glTexImage2D(
                 GL_TEXTURE_2D, 0, GL_RGB, image.shape[1], image.shape[0], 0, GL_RGB, GL_UNSIGNED_BYTE, image

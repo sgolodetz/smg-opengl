@@ -14,8 +14,10 @@ class OpenGLMatrixContext:
         :param matrix_mode:     The OpenGL matrix mode (e.g. GL_PROJECTION) denoting the matrix to be changed.
         :param change_matrix:   The callable that should be used to change the matrix.
         """
-        self.__matrix_mode: int = matrix_mode
-        self.__set_matrix: Callable[[], None] = change_matrix
+        # : int
+        self.__matrix_mode = matrix_mode
+        # : Callable[[], None]
+        self.__set_matrix = change_matrix
 
     # SPECIAL METHODS
 
