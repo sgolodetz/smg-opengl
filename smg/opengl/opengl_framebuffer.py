@@ -13,26 +13,22 @@ class OpenGLFrameBuffer:
         :param width:   The width of the frame buffer.
         :param height:  The height of the frame buffer.
         """
-        # : bool
-        self.__alive = False
+        self.__alive = False  # type: bool
 
         # Set up the colour buffer.
-        # : int
-        self.__colour_buffer_id = glGenTextures(1)
+        self.__colour_buffer_id = glGenTextures(1)  # type: int
         glBindTexture(GL_TEXTURE_2D, self.__colour_buffer_id)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, None)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
 
         # Set up the depth buffer.
-        # : int
-        self.__depth_buffer_id = glGenRenderbuffers(1)
+        self.__depth_buffer_id = glGenRenderbuffers(1)  # type: int
         glBindRenderbuffer(GL_RENDERBUFFER, self.__depth_buffer_id)
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height)
 
         # Set up the frame buffer.
-        # : int
-        self.__id = glGenFramebuffers(1)
+        self.__id = glGenFramebuffers(1)  # type: int
         glBindFramebuffer(GL_FRAMEBUFFER, self.__id)
 
         # Attach the colour buffer to the frame buffer.

@@ -36,8 +36,7 @@ class CameraRenderer:
         :param body_scale:      The scale factor to apply to the camera's body (if we're rendering it).
         """
         n, p, u, v = cam.n() * axis_scale, cam.p(), cam.u() * axis_scale, cam.v() * axis_scale
-        # : np.ndarray
-        origin = np.zeros(3)
+        origin = np.zeros(3)  # type: np.ndarray
 
         # If a body colour was specified, render the camera's body as a wireframe sphere.
         if body_colour is not None:
