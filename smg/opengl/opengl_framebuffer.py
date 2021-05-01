@@ -1,4 +1,5 @@
 from OpenGL.GL import *
+from OpenGL.GL.framebufferobjects import *
 
 
 class OpenGLFrameBuffer:
