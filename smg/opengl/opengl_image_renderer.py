@@ -12,7 +12,7 @@ class OpenGLImageRenderer:
 
     def __init__(self):
         """Construct an OpenGL image renderer."""
-        self.__alive = True  # type: bool
+        self.__alive = True                   # type: bool
         self.__texture_id = glGenTextures(1)  # type: int
 
     # DESTRUCTOR

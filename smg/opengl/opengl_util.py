@@ -25,7 +25,7 @@ class OpenGLUtil:
             :param quadric:     An optional existing GLU quadric to wrap (if none is specified,
                                 one will be created on the fly).
             """
-            self.__alive = True  # type: bool
+            self.__alive = True                                                   # type: bool
             self.__quadric = quadric if quadric is not None else gluNewQuadric()  # type: GLUquadric
 
         # DESTRUCTOR
@@ -73,15 +73,15 @@ class OpenGLUtil:
             :param axis:        The cylinder's axis (a vector from the centre of its base to the centre of its top).
             """
             self.__base_centre = base_centre  # type: np.ndarray
-            self.__axis = axis  # type: np.ndarray
+            self.__axis = axis                # type: np.ndarray
 
         # SPECIAL METHODS
 
         def __enter__(self):
             """Modify the model-view matrix to arrange for the cylinder to be drawn in the right place."""
             # Make a camera positioned at the centre of the base of the cylinder and looking along its axis.
-            n = self.__axis / np.linalg.norm(self.__axis)  # type: np.ndarray
-            up = np.array([0.0, -1.0, 0.0])  # type: np.ndarray
+            n = self.__axis / np.linalg.norm(self.__axis)     # type: np.ndarray
+            up = np.array([0.0, -1.0, 0.0])                   # type: np.ndarray
             if np.linalg.norm(np.cross(n, up)) < 0.001:
                 up = np.array([1.0, 0.0, 0.0])
             camera = SimpleCamera(self.__base_centre, n, up)  # type: SimpleCamera
@@ -219,7 +219,7 @@ class OpenGLUtil:
         :param quadric:         An optional GLU quadric to use when rendering the cylinder (if none is specified,
                                 one will be created on the fly).
         """
-        axis = top_centre - base_centre  # type: np.ndarray
+        axis = top_centre - base_centre   # type: np.ndarray
         axis_norm = np.linalg.norm(axis)  # type: float
         if axis_norm < 0.001:
             return
@@ -335,16 +335,16 @@ class OpenGLUtil:
         :param width:       The width of the viewport.
         :param height:      The height of the viewport.
         """
-        near_val = 0.1  # type: float
+        near_val = 0.1    # type: float
         far_val = 1000.0  # type: float
 
         # To rederive these equations, use similar triangles. Note that fx = f / sx and fy = f / sy,
         # where sx and sy are the dimensions of a pixel on the image plane.
         fx, fy, cx, cy = intrinsics
-        left_val = -cx * near_val / fx  # type: float
+        left_val = -cx * near_val / fx            # type: float
         right_val = (width - cx) * near_val / fx  # type: float
-        bottom_val = -cy * near_val / fy  # type: float
-        top_val = (height - cy) * near_val / fy  # type: float
+        bottom_val = -cy * near_val / fy          # type: float
+        top_val = (height - cy) * near_val / fy   # type: float
 
         glLoadIdentity()
         glFrustum(left_val, right_val, bottom_val, top_val, near_val, far_val)
@@ -363,9 +363,9 @@ class OpenGLUtil:
         :param bottom_right:    An (x,y) tuple denoting the bottom-right of the viewport to set.
         :param window_size:     The window size.
         """
-        left = int(np.round(top_left[0] * window_size[0]))  # type: int
-        top = int(np.round((1.0 - bottom_right[1]) * window_size[1]))  # type: int
-        width = int((bottom_right[0] - top_left[0]) * window_size[0])  # type: int
+        left = int(np.round(top_left[0] * window_size[0]))              # type: int
+        top = int(np.round((1.0 - bottom_right[1]) * window_size[1]))   # type: int
+        width = int((bottom_right[0] - top_left[0]) * window_size[0])   # type: int
         height = int((bottom_right[1] - top_left[1]) * window_size[1])  # type: int
         glViewport(left, top, width, height)
         glScissor(left, top, width, height)
