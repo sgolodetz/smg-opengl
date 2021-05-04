@@ -18,8 +18,8 @@ class CameraRenderer:
         """The types of axes that can be rendered for a camera."""
         pass
 
-    AXES_NUV: EAxesType = 0
-    AXES_XYZ: EAxesType = 1
+    AXES_NUV = EAxesType(0)
+    AXES_XYZ = EAxesType(1)
 
     # PUBLIC STATIC METHODS
 
@@ -36,7 +36,7 @@ class CameraRenderer:
         :param body_scale:      The scale factor to apply to the camera's body (if we're rendering it).
         """
         n, p, u, v = cam.n() * axis_scale, cam.p(), cam.u() * axis_scale, cam.v() * axis_scale
-        origin: np.ndarray = np.zeros(3)
+        origin = np.zeros(3)  # type: np.ndarray
 
         # If a body colour was specified, render the camera's body as a wireframe sphere.
         if body_colour is not None:
