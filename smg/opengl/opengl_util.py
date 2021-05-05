@@ -235,21 +235,24 @@ class OpenGLUtil:
                 glTranslatef(0.0, 0.0, -axis_norm)
 
     @staticmethod
-    def render_path(path: Deque[np.ndarray], *, colour: Tuple[float, float, float]) -> None:
+    def render_path(path: Deque[np.ndarray], *, colour: Tuple[float, float, float], width: int = 1) -> None:
         """
         Render the line segments needed to visualise a path.
 
         :param path:    The path to visualise.
         :param colour:  The colour to use for the line segments.
+        :param width:   The width to use for the line segments.
         """
         if len(path) < 2:
             return
 
         glColor3f(*colour)
+        glLineWidth(width)
         glBegin(GL_LINE_STRIP)
         for pos in path:
             glVertex3f(*pos)
         glEnd()
+        glLineWidth(1)
 
     @staticmethod
     def render_sphere(centre: np.ndarray, radius: float, *,
