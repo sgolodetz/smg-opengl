@@ -2,7 +2,7 @@ import numpy as np
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from typing import Deque, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from smg.rigging.cameras import SimpleCamera
 from smg.rigging.helpers import CameraPoseConverter
@@ -235,11 +235,11 @@ class OpenGLUtil:
                 glTranslatef(0.0, 0.0, -axis_norm)
 
     @staticmethod
-    def render_path(path: Deque[np.ndarray], *, colour: Tuple[float, float, float], width: int = 1) -> None:
+    def render_path(path: np.ndarray, *, colour: Tuple[float, float, float], width: int = 1) -> None:
         """
         Render the line segments needed to visualise a path.
 
-        :param path:    The path to visualise.
+        :param path:    The path to visualise, as an nx3 array.
         :param colour:  The colour to use for the line segments.
         :param width:   The width to use for the line segments.
         """
