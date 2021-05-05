@@ -2,7 +2,7 @@ import numpy as np
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from typing import List, Optional, Tuple
+from typing import Deque, List, Optional, Tuple
 
 from smg.rigging.cameras import SimpleCamera
 from smg.rigging.helpers import CameraPoseConverter
@@ -235,6 +235,23 @@ class OpenGLUtil:
                 glTranslatef(0.0, 0.0, -axis_norm)
 
     @staticmethod
+    def render_path(path: Deque[np.ndarray], *, colour: Tuple[float, float, float]) -> None:
+        """
+        Render the line segments needed to visualise a path.
+
+        :param path:    The path to visualise.
+        :param colour:  The colour to use for the line segments.
+        """
+        if len(path) < 2:
+            return
+
+        glColor3f(*colour)
+        glBegin(GL_LINE_STRIP)
+        for pos in path:
+            glVertex3f(*pos)
+        glEnd()
+
+    @staticmethod
     def render_sphere(centre: np.ndarray, radius: float, *,
                       slices: int, stacks: int, quadric: Optional[GLUquadric] = None) -> None:
         """
@@ -291,12 +308,9 @@ class OpenGLUtil:
             return
 
         glColor3f(*colour)
-
         glBegin(GL_LINE_STRIP)
-
         for _, pose in trajectory:
             glVertex3f(*pose[0:3, 3])
-
         glEnd()
 
     @staticmethod
