@@ -71,7 +71,11 @@ class OpenGLFrameBuffer:
     def terminate(self) -> None:
         """Destroy the frame buffer."""
         if self.__alive:
-            glDeleteRenderbuffers(1, [self.__depth_buffer_id])
-            glDeleteTextures([self.__colour_buffer_id])
-            glDeleteFramebuffers(1, [self.__id])
+            try:
+                glDeleteRenderbuffers(1, [self.__depth_buffer_id])
+                glDeleteTextures([self.__colour_buffer_id])
+                glDeleteFramebuffers(1, [self.__id])
+            except Error:
+                pass
+
             self.__alive = False
