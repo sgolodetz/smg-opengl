@@ -235,13 +235,15 @@ class OpenGLUtil:
                 glTranslatef(0.0, 0.0, -axis_norm)
 
     @staticmethod
-    def render_path(path: np.ndarray, *, colour: Tuple[float, float, float], width: int = 1) -> None:
+    def render_path(path: np.ndarray, *, colour: Tuple[float, float, float],
+                    waypoints: bool = False, width: int = 1) -> None:
         """
-        Render the line segments needed to visualise a path.
+        Render a path.
 
-        :param path:    The path to visualise, as an nx3 array.
-        :param colour:  The colour to use for the line segments.
-        :param width:   The width to use for the line segments.
+        :param path:         The path to visualise, as an nx3 array.
+        :param colour:       The colour to use for the path.
+        :param waypoints:    Whether to render the waypoints in addition to the path itself.
+        :param width:        The width to use for the path.
         """
         if len(path) < 2:
             return
@@ -253,6 +255,10 @@ class OpenGLUtil:
             glVertex3f(*pos)
         glEnd()
         glLineWidth(1)
+
+        if waypoints:
+            for pos in path:
+                OpenGLUtil.render_sphere(pos, 0.01, slices=10, stacks=10)
 
     @staticmethod
     def render_sphere(centre: np.ndarray, radius: float, *,
