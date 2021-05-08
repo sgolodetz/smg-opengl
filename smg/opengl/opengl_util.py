@@ -235,23 +235,30 @@ class OpenGLUtil:
                 glTranslatef(0.0, 0.0, -axis_norm)
 
     @staticmethod
-    def render_path(path: np.ndarray, *, colour: Tuple[float, float, float],
-                    waypoints: bool = False, width: int = 1) -> None:
+    def render_path(path: np.ndarray, *, start_colour, end_colour, waypoints: bool = False, width: int = 1) -> None:
         """
         Render a path.
 
-        :param path:         The path to visualise, as an nx3 array.
-        :param colour:       The colour to use for the path.
-        :param waypoints:    Whether to render the waypoints in addition to the path itself.
-        :param width:        The width to use for the path.
+        .. note::
+            The colour will be linearly interpolated between start_colour and end_colour as we move along the path.
+
+        :param path:            The path to visualise, as an nx3 array.
+        :param start_colour:    The colour to use for the start of the path.
+        :param end_colour:      The colour to use for the end of the path.
+        :param waypoints:       Whether to render the waypoints in addition to the path itself.
+        :param width:           The width to use for the path.
         """
         if len(path) < 2:
             return
 
-        glColor3f(*colour)
         glLineWidth(width)
         glBegin(GL_LINE_STRIP)
-        for pos in path:
+        for i in range(len(path)):
+            t = i / (len(path) - 1)                                               # type: float
+            colour = (1 - t) * np.array(start_colour) + t * np.array(end_colour)  # type: np.ndarray
+            pos = path[i, :]                                                      # type: np.ndarray
+
+            glColor3f(*colour)
             glVertex3f(*pos)
         glEnd()
         glLineWidth(1)
