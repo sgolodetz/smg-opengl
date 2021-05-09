@@ -264,6 +264,7 @@ class OpenGLUtil:
         glLineWidth(1)
 
         if waypoints:
+            glColor3f(1, 0, 0)
             for pos in path:
                 OpenGLUtil.render_sphere(pos, 0.01, slices=10, stacks=10)
 
