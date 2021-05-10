@@ -2,7 +2,7 @@ import numpy as np
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
 from smg.rigging.cameras import SimpleCamera
 from smg.rigging.helpers import CameraPoseConverter
@@ -235,18 +235,20 @@ class OpenGLUtil:
                 glTranslatef(0.0, 0.0, -axis_norm)
 
     @staticmethod
-    def render_path(path: np.ndarray, *, start_colour, end_colour, waypoints: bool = False, width: int = 1) -> None:
+    def render_path(path: np.ndarray, *, start_colour, end_colour, width: int = 1,
+                    waypoint_colourer: Optional[Callable[[np.ndarray], np.ndarray]] = None) -> None:
         """
         Render a path.
 
         .. note::
             The colour will be linearly interpolated between start_colour and end_colour as we move along the path.
 
-        :param path:            The path to visualise, as an nx3 array.
-        :param start_colour:    The colour to use for the start of the path.
-        :param end_colour:      The colour to use for the end of the path.
-        :param waypoints:       Whether to render the waypoints in addition to the path itself.
-        :param width:           The width to use for the path.
+        :param path:                The path to visualise, as an nx3 array.
+        :param start_colour:        The colour to use for the start of the path.
+        :param end_colour:          The colour to use for the end of the path.
+        :param waypoint_colourer:   An optional function that can be used to determine the colours with which to
+                                    render waypoints on the path (when None, the waypoints will not be rendered).
+        :param width:               The width to use for the path.
         """
         if len(path) < 2:
             return
@@ -263,9 +265,9 @@ class OpenGLUtil:
         glEnd()
         glLineWidth(1)
 
-        if waypoints:
-            glColor3f(1, 0, 0)
+        if waypoint_colourer is not None:
             for pos in path:
+                glColor3f(*waypoint_colourer(pos))
                 OpenGLUtil.render_sphere(pos, 0.01, slices=10, stacks=10)
 
     @staticmethod
