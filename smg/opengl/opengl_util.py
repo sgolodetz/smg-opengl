@@ -253,12 +253,15 @@ class OpenGLUtil:
         if len(path) < 2:
             return
 
+        start_colour = np.array(start_colour)  # type: np.ndarray
+        end_colour = np.array(end_colour)      # type: np.ndarray
+
         glLineWidth(width)
         glBegin(GL_LINE_STRIP)
         for i in range(len(path)):
-            t = i / (len(path) - 1)                                               # type: float
-            colour = (1 - t) * np.array(start_colour) + t * np.array(end_colour)  # type: np.ndarray
-            pos = path[i, :]                                                      # type: np.ndarray
+            t = i / (len(path) - 1)                           # type: float
+            colour = (1 - t) * start_colour + t * end_colour  # type: np.ndarray
+            pos = path[i, :]                                  # type: np.ndarray
 
             glColor3f(*colour)
             glVertex3f(*pos)
