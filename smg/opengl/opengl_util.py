@@ -2,7 +2,7 @@ import numpy as np
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
 from smg.rigging.cameras import SimpleCamera
 from smg.rigging.helpers import CameraPoseConverter
@@ -235,6 +235,45 @@ class OpenGLUtil:
                 glTranslatef(0.0, 0.0, -axis_norm)
 
     @staticmethod
+    def render_path(path: np.ndarray, *, start_colour, end_colour, width: int = 1,
+                    waypoint_colourer: Optional[Callable[[np.ndarray], np.ndarray]] = None) -> None:
+        """
+        Render a path.
+
+        .. note::
+            The colour will be linearly interpolated between start_colour and end_colour as we move along the path.
+
+        :param path:                The path to visualise, as an nx3 array.
+        :param start_colour:        The colour to use for the start of the path.
+        :param end_colour:          The colour to use for the end of the path.
+        :param waypoint_colourer:   An optional function that can be used to determine the colours with which to
+                                    render waypoints on the path (when None, the waypoints will not be rendered).
+        :param width:               The width to use for the path.
+        """
+        if len(path) < 2:
+            return
+
+        start_colour = np.array(start_colour)  # type: np.ndarray
+        end_colour = np.array(end_colour)      # type: np.ndarray
+
+        glLineWidth(width)
+        glBegin(GL_LINE_STRIP)
+        for i in range(len(path)):
+            t = i / (len(path) - 1)                           # type: float
+            colour = (1 - t) * start_colour + t * end_colour  # type: np.ndarray
+            pos = path[i, :]                                  # type: np.ndarray
+
+            glColor3f(*colour)
+            glVertex3f(*pos)
+        glEnd()
+        glLineWidth(1)
+
+        if waypoint_colourer is not None:
+            for pos in path:
+                glColor3f(*waypoint_colourer(pos))
+                OpenGLUtil.render_sphere(pos, 0.01, slices=10, stacks=10)
+
+    @staticmethod
     def render_sphere(centre: np.ndarray, radius: float, *,
                       slices: int, stacks: int, quadric: Optional[GLUquadric] = None) -> None:
         """
@@ -291,12 +330,9 @@ class OpenGLUtil:
             return
 
         glColor3f(*colour)
-
         glBegin(GL_LINE_STRIP)
-
         for _, pose in trajectory:
             glVertex3f(*pose[0:3, 3])
-
         glEnd()
 
     @staticmethod

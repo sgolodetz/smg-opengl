@@ -71,7 +71,17 @@ class OpenGLFrameBuffer:
     def terminate(self) -> None:
         """Destroy the frame buffer."""
         if self.__alive:
-            glDeleteRenderbuffers(1, [self.__depth_buffer_id])
-            glDeleteTextures([self.__colour_buffer_id])
-            glDeleteFramebuffers(1, [self.__id])
+            try:
+                glDeleteRenderbuffers(1, [self.__depth_buffer_id])
+                glDeleteTextures([self.__colour_buffer_id])
+                glDeleteFramebuffers(1, [self.__id])
+            except Error:
+                # FIXME: Unfortunately, glDeleteRenderbuffers seems to be in different places in the different
+                #        versions of PyOpenGL we use. That sometimes causes us not to find it, and an exception
+                #        to be raised. That leaves us in a much worse position than we would have been had we
+                #        simply not tried to be tidy and call glDeleteRenderbuffers in the first place. Since
+                #        we're good people, we do still try to call it, but we also suppress any exception that
+                #        gets raised as a defence mechanism. That seems like a fair compromise position.
+                pass
+
             self.__alive = False
