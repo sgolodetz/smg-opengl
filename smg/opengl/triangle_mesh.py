@@ -10,7 +10,8 @@ class TriangleMesh:
     # CONSTRUCTOR
 
     def __init__(self, vertices: np.ndarray, vertex_colours: np.ndarray, indices: np.ndarray):
-        self.__vbo: VBO = VBO(vertices)
+        x = np.concatenate([vertices, vertex_colours], axis=1)
+        self.__vbo: VBO = VBO(x)
         self.__indices = indices
         self.__ibo: VBO = VBO(indices, target=GL_ELEMENT_ARRAY_BUFFER)
 
@@ -32,21 +33,14 @@ class TriangleMesh:
     # PUBLIC METHODS
 
     def render(self) -> None:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
         self.__vbo.bind()
         self.__ibo.bind()
         glEnableClientState(GL_VERTEX_ARRAY)
-        glVertexPointerd(self.__vbo)
+        glEnableClientState(GL_COLOR_ARRAY)
+        glVertexPointer(3, GL_DOUBLE, 48, self.__vbo)
+        glColorPointer(3, GL_DOUBLE, 48, self.__vbo + 24)
         glDrawElements(GL_TRIANGLES, len(self.__indices) * 3, GL_UNSIGNED_INT, self.__ibo)
-        # glDrawElements(GL_TRIANGLES, len(self.__indices) * 3, GL_UNSIGNED_INT, self.__indices)
-        # glDrawArrays(GL_TRIANGLES, 0, 9)
+        glDisableClientState(GL_COLOR_ARRAY)
         glDisableClientState(GL_VERTEX_ARRAY)
         self.__ibo.unbind()
         self.__vbo.unbind()
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-
-        # glEnableClientState(GL_VERTEX_ARRAY)
-        # glEnableClientState(GL_COLOR_ARRAY)
-        # glDrawElements(GL_TRIANGLES, len(self.__indices) * 3, GL_UNSIGNED_INT, self.__indices)
-        # glDisableClientState(GL_VERTEX_ARRAY)
-        # glDisableClientState(GL_COLOR_ARRAY)
