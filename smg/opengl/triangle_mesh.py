@@ -21,11 +21,18 @@ class TriangleMesh:
         :param vertex_normals:  TODO
         """
         # See: http://pyopengl.sourceforge.net/context/tutorials/shader_2.html.
+        if vertices.dtype != np.float64 or vertex_colours.dtype != np.float64:
+            raise RuntimeError("The vertices and vertex_colours arrays must have a dtype of np.float64")
+
         self.__use_normals: bool = vertex_normals is not None
         if self.__use_normals:
+            if vertex_normals.dtype != np.float64:
+                raise RuntimeError("The vertex normals array must have a dtype of np.float64")
+
             self.__vbo: VBO = VBO(np.concatenate([vertices, vertex_colours, vertex_normals], axis=1))
         else:
             self.__vbo: VBO = VBO(np.concatenate([vertices, vertex_colours], axis=1))
+
         self.__ibo: VBO = VBO(triangles, target=GL_ELEMENT_ARRAY_BUFFER)
 
     # PUBLIC METHODS
