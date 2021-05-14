@@ -138,6 +138,15 @@ class OpenGLUtil:
         glLoadMatrixf(m.flatten(order='F'))
 
     @staticmethod
+    def mult_matrix(m: np.ndarray) -> None:
+        """
+        Multiply the currently active OpenGL matrix by the specified matrix.
+
+        :param m:   The matrix by which to multiply the currently active OpenGL matrix.
+        """
+        glMultMatrixf(m.flatten(order='F'))
+
+    @staticmethod
     def read_bgr_image(width: int, height: int) -> np.ndarray:
         """
         Read the contents of the screen (or active framebuffer) into a BGR image.
