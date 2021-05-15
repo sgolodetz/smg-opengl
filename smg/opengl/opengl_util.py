@@ -252,7 +252,7 @@ class OpenGLUtil:
         .. note::
             The colour will be linearly interpolated between start_colour and end_colour as we move along the path.
 
-        :param path:                The path to visualise, as an nx3 array.
+        :param path:                The path to visualise, as an n*3 array.
         :param start_colour:        The colour to use for the start of the path.
         :param end_colour:          The colour to use for the end of the path.
         :param waypoint_colourer:   An optional function that can be used to determine the colours with which to
