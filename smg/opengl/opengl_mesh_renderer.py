@@ -7,8 +7,8 @@ from smg.rigging.helpers import CameraPoseConverter
 
 from .opengl_framebuffer import OpenGLFrameBuffer
 from .opengl_matrix_context import OpenGLMatrixContext
+from .opengl_triangle_mesh import OpenGLTriangleMesh
 from .opengl_util import OpenGLUtil
-from .triangle_mesh import TriangleMesh
 
 
 class OpenGLMeshRenderer:
@@ -38,7 +38,7 @@ class OpenGLMeshRenderer:
 
     # PUBLIC METHODS
 
-    def render(self, mesh: TriangleMesh, *, light_dirs: Optional[List[np.ndarray]] = None) -> None:
+    def render(self, mesh: OpenGLTriangleMesh, *, light_dirs: Optional[List[np.ndarray]] = None) -> None:
         """
         Render the specified mesh with the specified directional lighting.
 
@@ -88,8 +88,8 @@ class OpenGLMeshRenderer:
         # Restore the attributes to their previous states.
         glPopAttrib()
 
-    def render_to_image(self, mesh: TriangleMesh, world_from_camera: np.ndarray, image_size: Tuple[int, int],
-                        intrinsics: Tuple[float, float, float, float], *,
+    def render_to_image(self, mesh: OpenGLTriangleMesh, world_from_camera: np.ndarray,
+                        image_size: Tuple[int, int], intrinsics: Tuple[float, float, float, float], *,
                         light_dirs: Optional[List[np.ndarray]] = None) -> np.ndarray:
         """
         Render the specified mesh with the specified directional lighting to an image.

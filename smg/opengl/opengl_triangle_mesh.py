@@ -5,7 +5,7 @@ from OpenGL.GL import *
 from typing import Optional
 
 
-class TriangleMesh:
+class OpenGLTriangleMesh:
     """An immutable triangle mesh (stored in a format that can be rendered efficiently by OpenGL)."""
 
     # CONSTRUCTOR
@@ -13,7 +13,7 @@ class TriangleMesh:
     def __init__(self, vertices: np.ndarray, vertex_colours: np.ndarray, triangles: np.ndarray, *,
                  vertex_normals: Optional[np.ndarray] = None):
         """
-        Construct an immutable triangle mesh.
+        Construct an immutable OpenGL triangle mesh.
 
         :param vertices:        The mesh vertices, as an n*3 array with a dtype of np.float64.
         :param vertex_colours:  The mesh vertex colours, as an n*3 array with a dtype of np.float64.
