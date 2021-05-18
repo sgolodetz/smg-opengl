@@ -17,7 +17,7 @@ Scene = TypeVar('Scene')
 
 # MAIN CLASS
 
-class OpenGLSceneRenderer(Generic[Scene]):
+class OpenGLSceneRenderer:
     """An OpenGL scene renderer."""
 
     # CONSTRUCTOR
@@ -42,10 +42,11 @@ class OpenGLSceneRenderer(Generic[Scene]):
         """Destroy the renderer at the end of the with statement that's used to manage its lifetime."""
         self.terminate()
 
-    # PUBLIC METHODS
+    # PUBLIC STATIC METHODS
 
-    def render(self, scene: Scene, render_scene: Callable[[Scene], None], *,
-               light_dirs: Optional[List[np.ndarray]] = None) -> None:
+    @staticmethod
+    def render(scene: Scene, render_scene: Callable[[Scene], None], *, light_dirs: Optional[List[np.ndarray]] = None) \
+            -> None:
         """
         Render the specified scene with the specified directional lighting.
 
@@ -96,6 +97,8 @@ class OpenGLSceneRenderer(Generic[Scene]):
         # Restore the attributes to their previous states.
         glPopAttrib()
 
+    # PUBLIC METHODS
+
     def render_to_image(self, scene: Scene, render_scene: Callable[[Scene], None], world_from_camera: np.ndarray,
                         image_size: Tuple[int, int], intrinsics: Tuple[float, float, float, float], *,
                         light_dirs: Optional[List[np.ndarray]] = None) -> np.ndarray:
@@ -138,7 +141,7 @@ class OpenGLSceneRenderer(Generic[Scene]):
                     CameraPoseConverter.pose_to_modelview(np.linalg.inv(world_from_camera))
                 )):
                     # Render the scene itself with the specified lighting.
-                    self.render(scene, render_scene, light_dirs=light_dirs)
+                    OpenGLSceneRenderer.render(scene, render_scene, light_dirs=light_dirs)
 
                     # Read the contents of the frame buffer into an image and return it.
                     return OpenGLUtil.read_bgr_image(width, height)

@@ -18,7 +18,7 @@ class OpenGLPrespecifiedSceneRenderer(Generic[Scene]):
     # CONSTRUCTOR
 
     def __init__(self, scene: Scene, render_scene: Callable[[Scene], None],
-                 base_renderer: Optional[OpenGLSceneRenderer[Scene]] = None, *,
+                 base_renderer: Optional[OpenGLSceneRenderer] = None, *,
                  light_dirs: Optional[List[np.ndarray]] = None):
         """
         Construct an OpenGL pre-specified scene renderer.
@@ -34,10 +34,10 @@ class OpenGLPrespecifiedSceneRenderer(Generic[Scene]):
         :param light_dirs:      The directions from which to light the scene (optional).
         """
         self.__base_renderer = base_renderer \
-            if base_renderer is not None else OpenGLSceneRenderer[Scene]()  # type: OpenGLSceneRenderer[Scene]
-        self.__light_dirs = light_dirs                                      # type: Optional[List[np.ndarray]]
-        self.__render_scene = render_scene                                  # type: Callable[[Scene], None]
-        self.__scene = scene                                                # type: Scene
+            if base_renderer is not None else OpenGLSceneRenderer()  # type: OpenGLSceneRenderer[Scene]
+        self.__light_dirs = light_dirs                               # type: Optional[List[np.ndarray]]
+        self.__render_scene = render_scene                           # type: Callable[[Scene], None]
+        self.__scene = scene                                         # type: Scene
 
     # PUBLIC METHODS
 
