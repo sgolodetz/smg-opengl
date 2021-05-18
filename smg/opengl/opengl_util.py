@@ -138,6 +138,15 @@ class OpenGLUtil:
         glLoadMatrixf(m.flatten(order='F'))
 
     @staticmethod
+    def mult_matrix(m: np.ndarray) -> None:
+        """
+        Multiply the currently active OpenGL matrix by the specified matrix.
+
+        :param m:   The matrix by which to multiply the currently active OpenGL matrix.
+        """
+        glMultMatrixf(m.flatten(order='F'))
+
+    @staticmethod
     def read_bgr_image(width: int, height: int) -> np.ndarray:
         """
         Read the contents of the screen (or active framebuffer) into a BGR image.
@@ -243,7 +252,7 @@ class OpenGLUtil:
         .. note::
             The colour will be linearly interpolated between start_colour and end_colour as we move along the path.
 
-        :param path:                The path to visualise, as an nx3 array.
+        :param path:                The path to visualise, as an n*3 array.
         :param start_colour:        The colour to use for the start of the path.
         :param end_colour:          The colour to use for the end of the path.
         :param waypoint_colourer:   An optional function that can be used to determine the colours with which to

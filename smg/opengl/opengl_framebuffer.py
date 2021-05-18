@@ -14,7 +14,9 @@ class OpenGLFrameBuffer:
         :param width:   The width of the frame buffer.
         :param height:  The height of the frame buffer.
         """
-        self.__alive = False  # type: bool
+        self.__alive = False    # type: bool
+        self.__height = height  # type: int
+        self.__width = width    # type: int
 
         # Set up the colour buffer.
         self.__colour_buffer_id = glGenTextures(1)  # type: int
@@ -65,6 +67,26 @@ class OpenGLFrameBuffer:
         """Deactivate the frame buffer."""
         # TODO: Note that we don't currently support frame buffer nesting.
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
+
+    # PROPERTIES
+
+    @property
+    def height(self) -> int:
+        """
+        Get the height of the frame buffer.
+
+        :return:    The height of the frame buffer.
+        """
+        return self.__height
+
+    @property
+    def width(self) -> int:
+        """
+        Get the width of the frame buffer.
+
+        :return:    The width of the frame buffer.
+        """
+        return self.__width
 
     # PUBLIC METHODS
 
