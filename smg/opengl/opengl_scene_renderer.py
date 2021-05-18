@@ -22,8 +22,8 @@ class OpenGLSceneRenderer(Generic[Scene]):
 
     # CONSTRUCTOR
 
-    def __init__(self, scene: Scene, render_scene: Callable[[Scene], None], *,
-                 light_dirs: Optional[List[np.ndarray]] = None):
+    def __init__(self):  # , scene: Scene, render_scene: Callable[[Scene], None], *,
+                 # light_dirs: Optional[List[np.ndarray]] = None):
         """
         Construct an OpenGL scene renderer.
 
@@ -35,9 +35,9 @@ class OpenGLSceneRenderer(Generic[Scene]):
         :param light_dirs:      The directions from which to light the scene (optional).
         """
         self.__framebuffer = None           # type: Optional[OpenGLFrameBuffer]
-        self.__light_dirs = light_dirs      # type: Optional[List[np.ndarray]]
-        self.__render_scene = render_scene  # type: Callable[[Scene], None]
-        self.__scene = scene                # type: Scene
+        # self.__light_dirs = light_dirs      # type: Optional[List[np.ndarray]]
+        # self.__render_scene = render_scene  # type: Callable[[Scene], None]
+        # self.__scene = scene                # type: Scene
 
     # DESTRUCTOR
 
@@ -112,14 +112,22 @@ class OpenGLSceneRenderer(Generic[Scene]):
 
     # PUBLIC METHODS
 
-    def render_to_image(self, world_from_camera: np.ndarray, image_size: Tuple[int, int],
-                        intrinsics: Tuple[float, float, float, float]) -> np.ndarray:
+    def render_to_image(self, scene: Scene, render_scene: Callable[[Scene], None],
+                        world_from_camera: np.ndarray, image_size: Tuple[int, int],
+                        intrinsics: Tuple[float, float, float, float], *,
+                        light_dirs: Optional[List[np.ndarray]] = None) -> np.ndarray:
         """
         Render the scene to an image.
 
+        .. note::
+            If light_dirs is None, default light directions will be used. For no lights at all, pass in [].
+
+        :param scene:               The scene to render.
+        :param render_scene:        A function that can be called to render the scene itself.
         :param world_from_camera:   The pose from which to render the scene.
         :param image_size:          The size of image to render, as a (width, height) tuple.
         :param intrinsics:          The camera intrinsics, as an (fx, fy, cx, cy) tuple.
+        :param light_dirs:          The directions from which to light the scene (optional).
         :return:                    The rendered image.
         """
         # Make sure the OpenGL frame buffer has been constructed and has the right size.
@@ -147,7 +155,7 @@ class OpenGLSceneRenderer(Generic[Scene]):
                     CameraPoseConverter.pose_to_modelview(np.linalg.inv(world_from_camera))
                 )):
                     # Render the scene itself with the specified lighting.
-                    OpenGLSceneRenderer.render(self.__scene, self.__render_scene, light_dirs=self.__light_dirs)
+                    OpenGLSceneRenderer.render(scene, render_scene, light_dirs=light_dirs)
 
                     # Read the contents of the frame buffer into an image and return it.
                     return OpenGLUtil.read_bgr_image(width, height)
