@@ -12,12 +12,12 @@ from .triangle_mesh import TriangleMesh
 
 
 class OpenGLMeshRenderer:
-    """TODO"""
+    """An OpenGL mesh renderer."""
 
     # CONSTRUCTOR
 
     def __init__(self):
-        """TODO"""
+        """Construct an OpenGL mesh renderer."""
         self.__framebuffer = None  # type: Optional[OpenGLFrameBuffer]
 
     # DESTRUCTOR
@@ -42,12 +42,18 @@ class OpenGLMeshRenderer:
         """
         Render the specified mesh with the specified directional lighting.
 
+        .. note::
+            If light_dirs is None, default light directions will be used. For no lights at all, pass in [].
+
         :param mesh:        The mesh to render.
-        :param light_dirs:  The directions from which to light the mesh with directional lights.
+        :param light_dirs:  The directions from which to light the mesh (optional).
         """
+        # If the light directions haven't been explicitly specified, use the defaults.
         if light_dirs is None:
             pos = np.array([0.0, -2.0, -1.0, 0.0])  # type: np.ndarray
             light_dirs = [pos, -pos]
+
+        # Conversely, if too many light directions have been specified, raise an exception.
         elif len(light_dirs) > 8:
             raise RuntimeError("At most 8 light directions can be specified")
 
@@ -82,9 +88,22 @@ class OpenGLMeshRenderer:
         # Restore the attributes to their previous states.
         glPopAttrib()
 
-    def render_to_image(self, mesh: TriangleMesh, world_from_camera: np.ndarray,
-                        image_size: Tuple[int, int], intrinsics: Tuple[float, float, float, float],
-                        *, light_dirs: Optional[List[np.ndarray]] = None) -> np.ndarray:
+    def render_to_image(self, mesh: TriangleMesh, world_from_camera: np.ndarray, image_size: Tuple[int, int],
+                        intrinsics: Tuple[float, float, float, float], *,
+                        light_dirs: Optional[List[np.ndarray]] = None) -> np.ndarray:
+        """
+        Render the specified mesh with the specified directional lighting to an image.
+
+        .. note::
+            If light_dirs is None, default light directions will be used. For no lights at all, pass in [].
+
+        :param mesh:                The mesh to render.
+        :param world_from_camera:   The pose from which to render the mesh.
+        :param image_size:          The size of image to render, as a (width, height) tuple.
+        :param intrinsics:          The camera intrinsics, as an (fx, fy, cx, cy) tuple.
+        :param light_dirs:          The directions from which to light the mesh (optional).
+        :return:                    The rendered image.
+        """
         # Make sure the OpenGL frame buffer has been constructed and has the right size.
         width, height = image_size
         if self.__framebuffer is None:
@@ -93,9 +112,8 @@ class OpenGLMeshRenderer:
             self.__framebuffer.terminate()
             self.__framebuffer = OpenGLFrameBuffer(width, height)
 
-        # TODO
         with self.__framebuffer:
-            # Set the viewport to encompass the whole framebuffer.
+            # Set the viewport to encompass the whole frame buffer.
             OpenGLUtil.set_viewport((0.0, 0.0), (1.0, 1.0), (width, height))
 
             # Clear the background to black.
@@ -110,10 +128,14 @@ class OpenGLMeshRenderer:
                 with OpenGLMatrixContext(GL_MODELVIEW, lambda: OpenGLUtil.load_matrix(
                     CameraPoseConverter.pose_to_modelview(np.linalg.inv(world_from_camera))
                 )):
+                    # Render the mesh with the specified lighting.
                     self.render(mesh, light_dirs=light_dirs)
+
+                    # Read the contents of the frame buffer into an image and return it.
                     return OpenGLUtil.read_bgr_image(width, height)
 
     def terminate(self) -> None:
+        """Destroy the renderer."""
         if self.__framebuffer is not None:
             self.__framebuffer.terminate()
             self.__framebuffer = None
