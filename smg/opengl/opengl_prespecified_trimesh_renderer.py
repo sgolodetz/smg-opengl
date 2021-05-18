@@ -2,8 +2,8 @@ import numpy as np
 
 from typing import List, Optional, Tuple
 
-from .opengl_trimesh_renderer import OpenGLTriMeshRenderer
 from .opengl_trimesh import OpenGLTriMesh
+from .opengl_trimesh_renderer import OpenGLTriMeshRenderer
 
 
 class OpenGLPrespecifiedTriMeshRenderer:
@@ -17,7 +17,7 @@ class OpenGLPrespecifiedTriMeshRenderer:
         Construct an OpenGL pre-specified triangle mesh renderer.
 
         .. note::
-            If mesh_renderer is None, a new underlying mesh renderer will be constructed. However, users might
+            If base_renderer is None, a new underlying mesh renderer will be constructed. However, users might
             want to pass an existing one in to avoid wasting resources unnecessarily.
         .. note::
             If light_dirs is None, default light directions will be used. For no lights at all, pass in [].
@@ -26,9 +26,10 @@ class OpenGLPrespecifiedTriMeshRenderer:
         :param base_renderer:   The underlying mesh renderer (optional).
         :param light_dirs:      The directions from which to light the mesh (optional).
         """
-        self.__base_renderer: OpenGLTriMeshRenderer = base_renderer if base_renderer is not None else OpenGLTriMeshRenderer()
-        self.__light_dirs: Optional[List[np.ndarray]] = light_dirs
-        self.__mesh: OpenGLTriMesh = mesh
+        self.__base_renderer = base_renderer \
+            if base_renderer is not None else OpenGLTriMeshRenderer()  # type: OpenGLTriMeshRenderer
+        self.__light_dirs = light_dirs                                 # type: Optional[List[np.ndarray]]
+        self.__mesh = mesh                                             # type: OpenGLTriMesh
 
     # PUBLIC METHODS
 

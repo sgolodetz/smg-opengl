@@ -15,8 +15,8 @@ class OpenGLFrameBuffer:
         :param height:  The height of the frame buffer.
         """
         self.__alive = False    # type: bool
-        self.__width = width    # type: int
         self.__height = height  # type: int
+        self.__width = width    # type: int
 
         # Set up the colour buffer.
         self.__colour_buffer_id = glGenTextures(1)  # type: int
@@ -79,6 +79,7 @@ class OpenGLFrameBuffer:
         """
         return self.__height
 
+    @property
     def width(self) -> int:
         """
         Get the width of the frame buffer.
