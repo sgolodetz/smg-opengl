@@ -2,8 +2,8 @@ from .camera_renderer import CameraRenderer
 from .opengl_framebuffer import OpenGLFrameBuffer
 from .opengl_image_renderer import OpenGLImageRenderer
 from .opengl_matrix_context import OpenGLMatrixContext
-from .opengl_mesh_renderer import OpenGLMeshRenderer
-from .opengl_prespecified_mesh_renderer import OpenGLPrespecifiedMeshRenderer
-from .opengl_triangle_mesh import OpenGLTriangleMesh
+from .opengl_prespecified_trimesh_renderer import OpenGLPrespecifiedTriMeshRenderer
+from .opengl_trimesh import OpenGLTriMesh
+from .opengl_trimesh_renderer import OpenGLTriMeshRenderer
 from .opengl_util import OpenGLUtil
 from .shape_renderer import ShapeRenderer

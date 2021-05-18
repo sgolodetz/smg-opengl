@@ -5,7 +5,7 @@ from OpenGL.GL import *
 from typing import Optional
 
 
-class OpenGLTriangleMesh:
+class OpenGLTriMesh:
     """An immutable triangle mesh (stored in a format that can be rendered efficiently by OpenGL)."""
 
     # CONSTRUCTOR
