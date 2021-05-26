@@ -78,5 +78,12 @@ class OpenGLImageRenderer:
     def terminate(self) -> None:
         """Destroy the renderer."""
         if self.__alive:
-            glDeleteTextures([self.__texture_id])
+            try:
+                glDeleteTextures([self.__texture_id])
+            except Error:
+                # FIXME: It's good to be tidy and try to delete the texture, but it crashes sometimes, for reasons
+                #        I don't quite understand currently. For that reason, I'm currently suppressing the error,
+                #        on the basis that it's a fairly harmless one and crashing is worse.
+                pass
+
             self.__alive = False
