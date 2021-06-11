@@ -13,7 +13,7 @@ class OpenGLLightingContext:
     class Light(ABC):
         """An OpenGL light."""
 
-        # PUBLIC METHODS
+        # PUBLIC ABSTRACT METHODS
 
         @abstractmethod
         def enable(self, light_id: int) -> None:
