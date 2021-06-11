@@ -11,29 +11,63 @@ class OpenGLLightingContext:
     # NESTED TYPES
 
     class Light(ABC):
+        """An OpenGL light."""
+
+        # PUBLIC METHODS
+
         @abstractmethod
-        def enable(self, light_idx: int) -> None:
+        def enable(self, light_id: int) -> None:
+            """
+            Enable the light using the specified OpenGL light ID.
+
+            :param light_id:    The OpenGL light ID to use.
+            """
             pass
 
     class DirectionalLight(Light):
+        """A directional OpenGL light."""
+
+        # CONSTRUCTOR
+
         def __init__(self, direction: np.ndarray):
+            """
+            Construct a directional light.
+
+            .. note::
+                Directional lights in OpenGL are usually specified using a position that is the negation of the
+                desired direction. It's important not to accidentally specify that position as the direction here.
+
+            :param direction:   The direction in which the light is travelling.
+            """
             self.__direction = direction  # type: np.ndarray
 
-        def enable(self, light_idx: int) -> None:
-            glEnable(light_idx)
-            glLightfv(light_idx, GL_DIFFUSE, np.array([1, 1, 1, 1]))
-            glLightfv(light_idx, GL_SPECULAR, np.array([1, 1, 1, 1]))
-            glLightfv(light_idx, GL_POSITION, -self.__direction)
+        # PUBLIC METHODS
+
+        def enable(self, light_id: int) -> None:
+            """
+            Enable the light using the specified OpenGL light ID.
+
+            :param light_id:    The OpenGL light ID to use.
+            """
+            glEnable(light_id)
+            glLightfv(light_id, GL_DIFFUSE, np.array([1, 1, 1, 1]))
+            glLightfv(light_id, GL_SPECULAR, np.array([1, 1, 1, 1]))
+            glLightfv(light_id, GL_POSITION, -self.__direction)
 
     # CONSTRUCTOR
 
     def __init__(self, lights: Dict[int, Light]):
+        """
+        Construct an OpenGL lighting context.
+
+        :param lights:  The lights that should be temporarily enabled whilst the context is active.
+        """
         self.__lights = lights  # type: Dict[int, OpenGLLightingContext.Light]
 
     # SPECIAL METHODS
 
     def __enter__(self):
-        """TODO"""
+        """Push the old lighting state onto the OpenGL stack and enable the new lighting state."""
         glPushAttrib(GL_ENABLE_BIT | GL_LIGHTING_BIT)
 
         glEnable(GL_COLOR_MATERIAL)
@@ -47,5 +81,5 @@ class OpenGLLightingContext:
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        """TODO"""
+        """Pop the old lighting state from the OpenGL stack."""
         glPopAttrib()
