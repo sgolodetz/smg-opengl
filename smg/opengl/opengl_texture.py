@@ -5,7 +5,6 @@ from OpenGL.GL import *
 
 class OpenGLTexture:
     """An OpenGL texture."""
-    # FIXME: This duplicates a lot of OpenGLImageRenderer currently - we should make that use this.
 
     # CONSTRUCTOR
 

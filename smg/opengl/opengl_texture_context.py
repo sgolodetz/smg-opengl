@@ -4,15 +4,15 @@ from .opengl_texture import OpenGLTexture
 
 
 class OpenGLTextureContext:
-    """TODO"""
+    """Used to allow the current OpenGL texture to be temporarily changed and then restored later."""
 
     # CONSTRUCTOR
 
     def __init__(self, texture: OpenGLTexture):
         """
-        TODO
+        Construct an OpenGL texture context.
 
-        :param texture: TODO
+        :param texture: The texture that should be temporarily enabled whilst the context is active.
         """
         self.__texture = texture  # type: OpenGLTexture
 
