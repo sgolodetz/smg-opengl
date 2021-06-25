@@ -40,6 +40,9 @@ class OpenGLTexture:
         """
         Set the image for the texture.
 
+        .. note::
+            The texture must be bound prior to calling this method.
+
         :param image:   The image to set.
         """
         channels = image.shape[2]  # type: int
