@@ -2,7 +2,7 @@ import numpy as np
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from typing import Callable, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from smg.rigging.cameras import SimpleCamera
 from smg.rigging.helpers import CameraPoseConverter
@@ -262,31 +262,6 @@ class OpenGLUtil:
             glTranslatef(*centre)
             gluSphere(quadric_wrapper.get_quadric(), radius, slices, stacks)
             glPopMatrix()
-
-    @staticmethod
-    def render_textured_quad(texture_id: int) -> None:
-        """
-        Render a quad textured with the specified texture over the top of the current viewport.
-
-        :param texture_id:  The ID of the texture to apply to the quad.
-        """
-        glEnable(GL_TEXTURE_2D)
-
-        glBindTexture(GL_TEXTURE_2D, texture_id)
-        glColor3f(1.0, 1.0, 1.0)
-
-        glBegin(GL_QUADS)
-        glTexCoord2f(0, 0)
-        glVertex2f(0, 0)
-        glTexCoord2f(1, 0)
-        glVertex2f(1, 0)
-        glTexCoord2f(1, 1)
-        glVertex2f(1, 1)
-        glTexCoord2f(0, 1)
-        glVertex2f(0, 1)
-        glEnd()
-
-        glDisable(GL_TEXTURE_2D)
 
     @staticmethod
     def render_trajectory(trajectory: List[Tuple[float, np.ndarray]], *, colour: Tuple[float, float, float]) -> None:

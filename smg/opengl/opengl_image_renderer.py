@@ -2,6 +2,8 @@ import numpy as np
 
 from OpenGL.GL import *
 
+from .opengl_texture import OpenGLTexture
+from .opengl_texture_context import OpenGLTextureContext
 from .opengl_util import OpenGLUtil
 
 
@@ -12,8 +14,8 @@ class OpenGLImageRenderer:
 
     def __init__(self):
         """Construct an OpenGL image renderer."""
-        self.__alive = True                   # type: bool
-        self.__texture_id = glGenTextures(1)  # type: int
+        self.__alive = True               # type: bool
+        self.__texture = OpenGLTexture()  # type: OpenGLTexture
 
     # DESTRUCTOR
 
@@ -40,24 +42,7 @@ class OpenGLImageRenderer:
         :param image:               The colour image.
         :param use_alpha_blending:  Whether or not to use alpha blending.
         """
-        # Copy the image to a texture.
-        glBindTexture(GL_TEXTURE_2D, self.__texture_id)
-
         channels = image.shape[2]  # type: int
-        if channels == 3:
-            glTexImage2D(
-                GL_TEXTURE_2D, 0, GL_RGB, image.shape[1], image.shape[0], 0, GL_RGB, GL_UNSIGNED_BYTE, image
-            )
-        elif channels == 4:
-            glTexImage2D(
-                GL_TEXTURE_2D, 0, GL_RGBA, image.shape[1], image.shape[0], 0, GL_RGBA, GL_UNSIGNED_BYTE, image
-            )
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-
         if use_alpha_blending and channels == 4:
             # Save the current state.
             glPushAttrib(GL_COLOR_BUFFER_BIT)
@@ -68,7 +53,23 @@ class OpenGLImageRenderer:
 
         # Render a quad textured with the image over the top of the existing scene.
         OpenGLUtil.begin_2d()
-        OpenGLUtil.render_textured_quad(self.__texture_id)
+
+        with OpenGLTextureContext(self.__texture):
+            self.__texture.set_image(image)
+
+            glColor3f(1.0, 1.0, 1.0)
+
+            glBegin(GL_QUADS)
+            glTexCoord2f(0, 0)
+            glVertex2f(0, 0)
+            glTexCoord2f(1, 0)
+            glVertex2f(1, 0)
+            glTexCoord2f(1, 1)
+            glVertex2f(1, 1)
+            glTexCoord2f(0, 1)
+            glVertex2f(0, 1)
+            glEnd()
+
         OpenGLUtil.end_2d()
 
         if use_alpha_blending and channels == 4:
@@ -78,12 +79,5 @@ class OpenGLImageRenderer:
     def terminate(self) -> None:
         """Destroy the renderer."""
         if self.__alive:
-            try:
-                glDeleteTextures([self.__texture_id])
-            except Error:
-                # FIXME: It's good to be tidy and try to delete the texture, but it crashes sometimes, for reasons
-                #        I don't quite understand currently. For that reason, I'm currently suppressing the error,
-                #        on the basis that it's a fairly harmless one and crashing is worse.
-                pass
-
+            self.__texture.terminate()
             self.__alive = False
