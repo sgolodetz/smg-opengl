@@ -1,4 +1,5 @@
 from .camera_renderer import CameraRenderer
+from .opengl_depth_test_context import OpenGLDepthTestContext
 from .opengl_framebuffer import OpenGLFrameBuffer
 from .opengl_image_renderer import OpenGLImageRenderer
 from .opengl_lighting_context import OpenGLLightingContext
