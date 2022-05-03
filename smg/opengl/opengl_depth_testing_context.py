@@ -1,14 +1,14 @@
 from OpenGL.GL import *
 
 
-class OpenGLDepthTestContext:
-    """Used to allow OpenGL depth testing to be temporarily enabled and then disabled again later."""
+class OpenGLDepthTestingContext:
+    """Used to allow OpenGL depth testing to be temporarily enabled and then restored later."""
 
     # CONSTRUCTOR
 
     def __init__(self, depth_func: int):
         """
-        Construct an OpenGL depth test context.
+        Construct an OpenGL depth testing context.
 
         :param depth_func:  The depth testing function to use.
         """
