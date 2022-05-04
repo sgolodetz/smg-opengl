@@ -54,7 +54,10 @@ class OpenGLFrameBuffer:
 
     def __del__(self):
         """Destroy the frame buffer."""
-        self.terminate()
+        try:
+            self.terminate()
+        except ImportError:
+            pass
 
     # SPECIAL METHODS
 
