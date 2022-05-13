@@ -149,10 +149,10 @@ class OpenGLUtil:
     @staticmethod
     def read_bgr_image(width: int, height: int) -> np.ndarray:
         """
-        Read the contents of the screen (or active framebuffer) into a BGR image.
+        Read the contents of the screen (or active frame-buffer) into a BGR image.
 
-        :param width:   The screen / framebuffer width.
-        :param height:  The screen / framebuffer height.
+        :param width:   The screen / frame-buffer width.
+        :param height:  The screen / frame-buffer height.
         :return:        The BGR image.
         """
         buffer = glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE)  # type: bytes
