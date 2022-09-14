@@ -8,4 +8,5 @@ from .opengl_texture import OpenGLTexture
 from .opengl_texture_context import OpenGLTextureContext
 from .opengl_trimesh import OpenGLTriMesh
 from .opengl_util import OpenGLUtil
+from .scene_renderer import SceneRenderer
 from .shape_renderer import ShapeRenderer
