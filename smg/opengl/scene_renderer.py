@@ -17,7 +17,7 @@ Scene = TypeVar('Scene')
 # MAIN CLASS
 
 class SceneRenderer(Generic[Scene]):
-    """Used to render the scene for the drone simulator."""
+    """A simple 3D scene renderer (can be used to render to either the screen or an image)."""
 
     # CONSTRUCTOR
 
