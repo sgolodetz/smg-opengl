@@ -99,9 +99,9 @@ class SceneRenderer(Generic[Scene]):
 
     # PUBLIC METHODS
 
-    def render_to_image(self, render_scene: Callable[[], None], world_from_camera: np.ndarray,
-                        image_size: Tuple[int, int], intrinsics: Tuple[float, float, float, float], *,
-                        light_dirs: Optional[List[np.ndarray]] = None, use_backface_culling: bool = False) \
+    def render_rgbd_image(self, render_scene: Callable[[], None], world_from_camera: np.ndarray,
+                          image_size: Tuple[int, int], intrinsics: Tuple[float, float, float, float], *,
+                          light_dirs: Optional[List[np.ndarray]] = None, use_backface_culling: bool = False) \
             -> Tuple[np.ndarray, np.ndarray]:
         """
         Render the scene to an RGB-D image.
