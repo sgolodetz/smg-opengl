@@ -17,7 +17,7 @@ Scene = TypeVar('Scene')
 # MAIN CLASS
 
 class SceneRenderer(Generic[Scene]):
-    """A simple 3D scene renderer (can be used to render to either the screen or an image)."""
+    """A simple 3D scene renderer (can be used to render to either the screen or an RGB-D image)."""
 
     # CONSTRUCTOR
 
@@ -47,7 +47,7 @@ class SceneRenderer(Generic[Scene]):
     def render(render_scene: Callable[[], None], *, light_dirs: Optional[List[np.ndarray]] = None,
                use_backface_culling: bool = False) -> None:
         """
-        Render the scene with the specified directional lighting.
+        Render the scene.
 
         .. note::
             If light_dirs is None, default light directions will be used. For no lights at all, pass in [].
@@ -99,12 +99,12 @@ class SceneRenderer(Generic[Scene]):
 
     # PUBLIC METHODS
 
-    def render_to_image(self, render_scene: Callable[[], None], world_from_camera: np.ndarray,
-                        image_size: Tuple[int, int], intrinsics: Tuple[float, float, float, float], *,
-                        light_dirs: Optional[List[np.ndarray]] = None, use_backface_culling: bool = False) \
-            -> np.ndarray:
+    def render_rgbd_image(self, render_scene: Callable[[], None], world_from_camera: np.ndarray,
+                          image_size: Tuple[int, int], intrinsics: Tuple[float, float, float, float], *,
+                          light_dirs: Optional[List[np.ndarray]] = None, use_backface_culling: bool = False) \
+            -> Tuple[np.ndarray, np.ndarray]:
         """
-        Render the scene to an image.
+        Render the scene to an RGB-D image.
 
         .. note::
             If light_dirs is None, default light directions will be used. For no lights at all, pass in [].
@@ -115,7 +115,7 @@ class SceneRenderer(Generic[Scene]):
         :param intrinsics:              The camera intrinsics, as an (fx, fy, cx, cy) tuple.
         :param light_dirs:              The directions from which to light the scene (optional).
         :param use_backface_culling:    Whether or not to use back-face culling.
-        :return:                        The rendered image.
+        :return:                        The rendered RGB-D image, as a (colour image, depth image) pair.
         """
         # Make sure the OpenGL frame buffer has been constructed and has the right size.
         width, height = image_size
@@ -144,8 +144,10 @@ class SceneRenderer(Generic[Scene]):
                     # Render the scene itself with the specified lighting.
                     SceneRenderer.render(render_scene, light_dirs=light_dirs, use_backface_culling=use_backface_culling)
 
-                    # Read the contents of the frame buffer into an image and return it.
-                    return OpenGLUtil.read_bgr_image(width, height)
+                    # Read the contents of the frame buffer and depth buffer into images and return them.
+                    colour_image: np.ndarray = OpenGLUtil.read_bgr_image(width, height)
+                    depth_image: np.ndarray = OpenGLUtil.read_depth_image(width, height)
+                    return colour_image, depth_image
 
     def terminate(self) -> None:
         """Destroy the renderer."""
